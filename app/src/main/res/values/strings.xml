@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Contacts</string>
-    <string name="title_activity_main">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="favorites">Favorites</string>
+    <string name="all">All</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="email">Email address</string>
+    <string name="phone">Phone number</string>
+    <string name="favorite">Favorite</string>
+    <string name="new_contact">New contact</string>
 </resources>
