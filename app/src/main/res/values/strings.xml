@@ -8,4 +8,5 @@
     <string name="phone">Phone number</string>
     <string name="favorite">Favorite</string>
     <string name="new_contact">New contact</string>
+    <string name="save">Save</string>
 </resources>
