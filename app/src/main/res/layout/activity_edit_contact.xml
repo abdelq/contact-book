@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:layout_margin="8dp"
     tools:context=".EditContactActivity">
+
+    <data>
+
+        <variable
+            name="contact"
+            type="ca.umontreal.iro.dift2905.contacts.Contact" />
+    </data>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -33,10 +38,11 @@
                     android:id="@+id/first_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="first_name"
                     android:ems="10"
                     android:hint="@string/first_name"
                     android:inputType="textPersonName"
-                    android:autofillHints="first_name" />
+                    android:text="@={contact.firstName}" />
             </LinearLayout>
 
             <LinearLayout
@@ -49,10 +55,11 @@
                     android:id="@+id/last_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="last_name"
                     android:ems="10"
                     android:hint="@string/last_name"
                     android:inputType="textPersonName"
-                    android:autofillHints="last_name" />
+                    android:text="@={contact.lastName}" />
             </LinearLayout>
 
             <LinearLayout
@@ -72,10 +79,11 @@
                     android:id="@+id/phone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:autofillHints="phone"
                     android:ems="10"
                     android:hint="@string/phone"
                     android:inputType="phone"
-                    android:autofillHints="phone" />
+                    android:text="@={contact.phone}" />
             </LinearLayout>
 
             <LinearLayout
@@ -98,7 +106,8 @@
                     android:autofillHints="email"
                     android:ems="10"
                     android:hint="@string/email"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:text="@={contact.email}" />
             </LinearLayout>
 
             <LinearLayout
@@ -118,6 +127,7 @@
                     android:id="@+id/favorite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:checked="@={contact.isFavorite}"
                     android:paddingHorizontal="5dp"
                     android:paddingVertical="10dp"
                     android:text="@string/favorite"
@@ -127,4 +137,4 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

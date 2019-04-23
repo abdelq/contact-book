@@ -6,13 +6,18 @@ import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import ca.umontreal.iro.dift2905.contacts.databinding.ActivityEditContactBinding;
+
+import static ca.umontreal.iro.dift2905.contacts.databinding.ActivityEditContactBinding.inflate;
+
 public class EditContactActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_contact);
 
-        // TODO
+        ActivityEditContactBinding binding = inflate(getLayoutInflater());
+        //binding.setContact(); // TODO
     }
 
     @Override
