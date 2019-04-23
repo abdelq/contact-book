@@ -18,19 +18,40 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static SQLiteDatabase db;
 
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         if (db == null)
             db = getWritableDatabase();
     }
 
-    public List<Contact> getContacts(boolean onlyFav) {
-        String selection = null;
-        String[] selectionArgs = null;
-        if (onlyFav) {
-            selection = COLUMN_NAME_FAVORITE + " = ?";
-            selectionArgs = new String[]{"1"};
-        }
+    List<Contact> getContacts() {
+        String sortOrder = String.format("%s ASC, %s ASC",
+                COLUMN_NAME_FIRSTNAME, COLUMN_NAME_LASTNAME);
+
+        Cursor cur = db.query(ContactColumns.TABLE_NAME, null,
+                null, null, null, null,
+                sortOrder
+        );
+
+        List<Contact> contacts = new ArrayList<>();
+        for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext())
+            contacts.add(new Contact(
+                    cur.getInt(cur.getColumnIndex(_ID)),
+                    cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME)),
+                    cur.getString(cur.getColumnIndex(COLUMN_NAME_LASTNAME)),
+                    cur.getString(cur.getColumnIndex(COLUMN_NAME_PHONE)),
+                    cur.getString(cur.getColumnIndex(COLUMN_NAME_EMAIL)),
+                    cur.getInt(cur.getColumnIndex(COLUMN_NAME_FAVORITE))
+            ));
+        cur.close();
+
+        return contacts;
+    }
+
+
+    List<Contact> getContacts(boolean favorite) {
+        String selection = COLUMN_NAME_FAVORITE + " = ?";
+        String[] selectionArgs = new String[]{favorite ? "1" : "0"};
         String sortOrder = String.format("%s ASC, %s ASC",
                 COLUMN_NAME_FIRSTNAME, COLUMN_NAME_LASTNAME);
 
@@ -40,7 +61,7 @@ public class DBHelper extends SQLiteOpenHelper {
         );
 
         List<Contact> contacts = new ArrayList<>();
-        for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
+        for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext())
             contacts.add(new Contact(
                     cur.getInt(cur.getColumnIndex(_ID)),
                     cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME)),
@@ -49,11 +70,12 @@ public class DBHelper extends SQLiteOpenHelper {
                     cur.getString(cur.getColumnIndex(COLUMN_NAME_EMAIL)),
                     cur.getInt(cur.getColumnIndex(COLUMN_NAME_FAVORITE))
             ));
-        }
+        cur.close();
+
         return contacts;
     }
 
-    public void addContact(Contact contact) {
+    void addContact(Contact contact) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME_FIRSTNAME, contact.getFirstName());
         values.put(COLUMN_NAME_LASTNAME, contact.getLastName());
@@ -64,7 +86,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(ContactColumns.TABLE_NAME, null, values);
     }
 
-    public void updateContact(Contact contact) {
+    void updateContact(Contact contact) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME_FIRSTNAME, contact.getFirstName());
         values.put(COLUMN_NAME_LASTNAME, contact.getLastName());
@@ -78,7 +100,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update(ContactColumns.TABLE_NAME, values, selection, selectionArgs);
     }
 
-    public void deleteContact(Contact contact) {
+    void deleteContact(Contact contact) {
         String selection = _ID + " = ?";
         String[] selectionArgs = new String[]{contact.getId()};
 

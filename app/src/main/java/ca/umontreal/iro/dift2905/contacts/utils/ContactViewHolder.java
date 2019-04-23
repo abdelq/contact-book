@@ -1,13 +1,21 @@
 package ca.umontreal.iro.dift2905.contacts.utils;
 
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
-class ContactViewHolder extends RecyclerView.ViewHolder {
-    public ContactViewHolder(@NonNull View itemView) {
-        // TODO Vous avez le droit de changer la signature du constructeur
+import ca.umontreal.iro.dift2905.contacts.R;
+
+class ContactViewHolder extends ViewHolder {
+    TextView initialsTextView;
+    TextView nameTextView;
+
+    ContactViewHolder(@NonNull View itemView) {
         super(itemView);
+
+        initialsTextView = itemView.findViewById(R.id.initials);
+        nameTextView = itemView.findViewById(R.id.name);
     }
 }

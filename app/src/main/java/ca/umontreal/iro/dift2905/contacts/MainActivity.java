@@ -5,14 +5,14 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.bottomnavigation.BottomNavigationView.OnNavigationItemSelectedListener;
 
-import ca.umontreal.iro.dift2905.contacts.utils.ContactRecyclerAdapter;
+import java.util.List;
+
+import ca.umontreal.iro.dift2905.contacts.utils.ContactAdapter;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -20,26 +20,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        List<Contact> contacts = new DBHelper(getBaseContext()).getContacts();
+        ContactAdapter adapter = new ContactAdapter(contacts);
+
         RecyclerView contactList = findViewById(R.id.contact_list);
-        contactList.setAdapter(new ContactRecyclerAdapter());
+        contactList.setHasFixedSize(true);
+        contactList.setAdapter(adapter);
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(new OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_fav:
-                        // TODO
-                        return true;
-                    case R.id.navigation_all:
-                        // TODO
-                        return true;
-                }
-                return false;
+        navigation.setOnNavigationItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.navigation_fav:
+                    contacts.removeIf(x -> !x.getIsFavorite());
+                    adapter.notifyDataSetChanged(); // XXX
+                    return true;
+                case R.id.navigation_all:
+                    List<Contact> notFavorite = new DBHelper(getBaseContext()).getContacts(false);
+                    contacts.addAll(notFavorite);
+                    adapter.notifyItemRangeInserted(contacts.size() - notFavorite.size(), notFavorite.size());
+                    return true;
             }
+            return false;
         });
-
-        // TODO
     }
 
     @Override

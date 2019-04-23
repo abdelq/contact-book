@@ -10,7 +10,7 @@ public class Contact extends BaseObservable {
     private boolean isFavorite;
 
     Contact(int id, String firstName, String lastName,
-                   String phone, String email, int isFavorite) {
+            String phone, String email, int isFavorite) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -85,5 +85,13 @@ public class Contact extends BaseObservable {
             this.isFavorite = isFavorite;
             notifyPropertyChanged(BR.contact);
         }
+    }
+
+    public String getInitials() {
+        return new String(new char[]{firstName.charAt(0), lastName.charAt(0)});
+    }
+
+    public String getFullName() {
+        return firstName + " " + lastName;
     }
 }
