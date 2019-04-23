@@ -11,13 +11,15 @@ import ca.umontreal.iro.dift2905.contacts.databinding.ActivityEditContactBinding
 import static ca.umontreal.iro.dift2905.contacts.databinding.ActivityEditContactBinding.inflate;
 
 public class EditContactActivity extends AppCompatActivity {
+    private ActivityEditContactBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_contact);
 
-        ActivityEditContactBinding binding = inflate(getLayoutInflater());
-        //binding.setContact(); // TODO
+        binding = inflate(getLayoutInflater());
+        binding.setContact(getIntent().getParcelableExtra("contact"));
     }
 
     @Override
@@ -28,8 +30,18 @@ public class EditContactActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.save)
-            return super.onOptionsItemSelected(item); // TODO
+        if (item.getItemId() == R.id.save) {
+            Contact contact = binding.getContact();
+            DBHelper dbHelper = new DBHelper(getBaseContext());
+
+            if (contact.getId() > 0)
+                dbHelper.updateContact(contact);
+            else
+                dbHelper.addContact(contact);
+
+            finish();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 }

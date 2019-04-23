@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -13,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.List;
 
 import ca.umontreal.iro.dift2905.contacts.utils.ContactAdapter;
+import ca.umontreal.iro.dift2905.contacts.utils.ContactSwipeCallback;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -26,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView contactList = findViewById(R.id.contact_list);
         contactList.setHasFixedSize(true);
         contactList.setAdapter(adapter);
+
+        ItemTouchHelper touchHelper = new ItemTouchHelper(new ContactSwipeCallback(getBaseContext()));
+        touchHelper.attachToRecyclerView(contactList);
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(item -> {
@@ -52,8 +57,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.new_contact)
-            startActivity(new Intent(this, EditContactActivity.class));
+        if (item.getItemId() == R.id.new_contact) {
+            Intent intent =new Intent(this, EditContactActivity.class);
+            intent.putExtra("contact", new Contact());
+            startActivity(intent);
+        }
         return super.onOptionsItemSelected(item);
     }
 }

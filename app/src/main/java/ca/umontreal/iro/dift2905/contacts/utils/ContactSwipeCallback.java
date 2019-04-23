@@ -8,7 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
@@ -16,11 +16,11 @@ import ca.umontreal.iro.dift2905.contacts.R;
 
 import static java.util.Objects.requireNonNull;
 
-class ContactSwipeCallback extends ItemTouchHelper.SimpleCallback {
+public class ContactSwipeCallback extends SimpleCallback {
     private Drawable icon;
     private int iconWidth, iconHeight;
 
-    ContactSwipeCallback(Context context) {
+    public ContactSwipeCallback(Context context) {
         // TODO Vous avez le droit de changer la signature du constructeur
         super(0, 0);
 

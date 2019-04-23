@@ -1,13 +1,31 @@
 package ca.umontreal.iro.dift2905.contacts;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
-public class Contact extends BaseObservable {
+public class Contact extends BaseObservable implements Parcelable {
     private int id;
     private String firstName, lastName;
     private String phone, email;
     private boolean isFavorite;
+
+    public static final Creator<Contact> CREATOR = new Creator<Contact>() {
+        @Override
+        public Contact createFromParcel(Parcel in) {
+            return new Contact(in);
+        }
+
+        @Override
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
+
+    Contact() {
+    }
 
     Contact(int id, String firstName, String lastName,
             String phone, String email, int isFavorite) {
@@ -19,8 +37,17 @@ public class Contact extends BaseObservable {
         this.isFavorite = isFavorite == 1;
     }
 
-    public String getId() {
-        return String.valueOf(id);
+    private Contact(Parcel in) {
+        id = in.readInt();
+        firstName = in.readString();
+        lastName = in.readString();
+        phone = in.readString();
+        email = in.readString();
+        isFavorite = in.readInt() == 1;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void setId(int id) {
@@ -88,10 +115,35 @@ public class Contact extends BaseObservable {
     }
 
     public String getInitials() {
-        return new String(new char[]{firstName.charAt(0), lastName.charAt(0)});
+        String initials = "";
+        if (firstName != null)
+            initials += firstName.charAt(0);
+        if (lastName != null)
+            initials += lastName.charAt(0);
+        return initials;
     }
 
     public String getFullName() {
-        return firstName + " " + lastName;
+        String name = "";
+        if (firstName != null)
+            name += firstName + " "; // XXX
+        if (lastName != null)
+            name += lastName;
+        return name;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0; // XXX
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(phone);
+        dest.writeString(email);
+        dest.writeInt(isFavorite ? 1 : 0);
     }
 }

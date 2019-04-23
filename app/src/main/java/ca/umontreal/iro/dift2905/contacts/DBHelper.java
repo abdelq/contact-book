@@ -95,14 +95,14 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_NAME_FAVORITE, contact.getIsFavorite());
 
         String selection = _ID + " = ?";
-        String[] selectionArgs = new String[]{contact.getId()};
+        String[] selectionArgs = new String[]{String.valueOf(contact.getId())};
 
         db.update(ContactColumns.TABLE_NAME, values, selection, selectionArgs);
     }
 
     void deleteContact(Contact contact) {
         String selection = _ID + " = ?";
-        String[] selectionArgs = new String[]{contact.getId()};
+        String[] selectionArgs = new String[]{String.valueOf(contact.getId())};
 
         db.delete(ContactColumns.TABLE_NAME, selection, selectionArgs);
     }
