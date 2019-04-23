@@ -4,20 +4,27 @@ import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
 public class Contact extends BaseObservable {
-    /* TODO */
     private int id;
     private String firstName, lastName;
     private String phone, email;
     private boolean isFavorite;
 
-    public Contact(int id, String firstName, String lastName,
-                   String phone, String email, boolean isFavorite) {
+    Contact(int id, String firstName, String lastName,
+                   String phone, String email, int isFavorite) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.email = email;
-        this.isFavorite = isFavorite;
+        this.isFavorite = isFavorite == 1;
+    }
+
+    public String getId() {
+        return String.valueOf(id);
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Bindable
