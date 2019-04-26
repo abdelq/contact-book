@@ -5,10 +5,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import ca.umontreal.iro.dift2905.contacts.databinding.ActivityEditContactBinding;
-
-import static ca.umontreal.iro.dift2905.contacts.databinding.ActivityEditContactBinding.inflate;
 
 public class EditContactActivity extends AppCompatActivity {
     private ActivityEditContactBinding binding;
@@ -16,9 +15,8 @@ public class EditContactActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_contact);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_edit_contact);
 
-        binding = inflate(getLayoutInflater());
         binding.setContact(getIntent().getParcelableExtra("contact"));
     }
 

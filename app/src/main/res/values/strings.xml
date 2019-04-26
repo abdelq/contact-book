@@ -5,7 +5,7 @@
     <string name="first_name">First name</string>
     <string name="last_name">Last name</string>
     <string name="email">Email address</string>
-    <string name="phone">Phone number</string>
+    <string name="phone">Phone</string>
     <string name="favorite">Favorite</string>
     <string name="new_contact">New contact</string>
     <string name="save">Save</string>
