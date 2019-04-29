@@ -9,6 +9,7 @@ import android.provider.BaseColumns;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static ca.umontreal.iro.dift2905.contacts.DBHelper.ContactColumns.*;
@@ -19,19 +20,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static SQLiteDatabase db;
 
-    DBHelper(Context context) {
+    public DBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         if (db == null)
             db = getWritableDatabase();
     }
 
     List<Contact> getContacts() {
-        String sortOrder = String.format("%s ASC, %s ASC",
-                COLUMN_NAME_FIRSTNAME, COLUMN_NAME_LASTNAME);
-
         Cursor cur = db.query(ContactColumns.TABLE_NAME, null,
                 null, null, null, null,
-                sortOrder
+                null
         );
 
         List<Contact> contacts = new ArrayList<>();
@@ -46,6 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
             ));
         cur.close();
 
+        Collections.sort(contacts, new SortbyName());
         return contacts;
     }
 
@@ -53,19 +52,17 @@ public class DBHelper extends SQLiteOpenHelper {
     List<Contact> getContactsFiltered(boolean favorite, String filter) {
         String selection = COLUMN_NAME_FAVORITE + " = ?";
         String[] selectionArgs = new String[]{favorite ? "1" : "0"};
-        String sortOrder = String.format("%s ASC, %s ASC",
-                COLUMN_NAME_FIRSTNAME, COLUMN_NAME_LASTNAME);
         Cursor cur;
 
         if(favorite)
             cur = db.query(ContactColumns.TABLE_NAME, null,
                     selection, selectionArgs,
-                    null, null, sortOrder
+                    null, null, null
             );
         else
             cur = db.query(ContactColumns.TABLE_NAME, null,
                     null, null,
-                    null, null, sortOrder
+                    null, null, null
             );
         List<Contact> contacts = new ArrayList<>();
         for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
@@ -85,6 +82,7 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         cur.close();
 
+        Collections.sort(contacts, new SortbyName());
         return contacts;
     }
 
@@ -113,7 +111,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update(ContactColumns.TABLE_NAME, values, selection, selectionArgs);
     }
 
-    void deleteContact(Contact contact) {
+    public void deleteContact(Contact contact) {
         String selection = _ID + " = ?";
         String[] selectionArgs = new String[]{String.valueOf(contact.getId())};
 

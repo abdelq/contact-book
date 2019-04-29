@@ -8,22 +8,27 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
+import ca.umontreal.iro.dift2905.contacts.Contact;
 import ca.umontreal.iro.dift2905.contacts.R;
 
 import static java.util.Objects.requireNonNull;
 
 public class ContactSwipeCallback extends SimpleCallback {
+    private final ContactAdapter adapter;
+    private Context context;
     private Drawable icon;
     private int iconWidth, iconHeight;
 
-    public ContactSwipeCallback(Context context) {
+    public ContactSwipeCallback(Context context, ContactAdapter adapter) {
         // TODO Vous avez le droit de changer la signature du constructeur
-        super(0, 0);
-
+        super(ItemTouchHelper.UP, ItemTouchHelper.LEFT);
+        this.adapter = adapter;
+        this.context = context;
         icon = context.getDrawable(R.drawable.ic_delete_primary_24dp);
         iconWidth = requireNonNull(icon).getIntrinsicWidth();
         iconHeight = requireNonNull(icon).getIntrinsicHeight();
@@ -38,8 +43,9 @@ public class ContactSwipeCallback extends SimpleCallback {
 
     @Override
     public void onSwiped(@NonNull ViewHolder viewHolder, int direction) {
-        // TODO
-        System.out.println("ALLOOO");
+        adapter.removeContact(context, viewHolder.getAdapterPosition());
+        //TODO : Supprimer le contact et mettre à jour la mainActivityView
+
     }
 
     @Override

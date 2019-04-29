@@ -1,5 +1,6 @@
 package ca.umontreal.iro.dift2905.contacts.utils;
 
+import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView.Adapter;
 import java.util.List;
 
 import ca.umontreal.iro.dift2905.contacts.Contact;
+import ca.umontreal.iro.dift2905.contacts.DBHelper;
 import ca.umontreal.iro.dift2905.contacts.R;
 
 import static android.view.LayoutInflater.from;
@@ -38,5 +40,12 @@ public class ContactAdapter extends Adapter<ContactViewHolder> {
     @Override
     public int getItemCount() {
         return mContacts.size();
+    }
+
+    public void removeContact(Context context, int position){
+        Contact contact = mContacts.get(position);
+        new DBHelper(context).deleteContact(contact);
+        mContacts.remove(position);
+        notifyItemRemoved(position);
     }
 }

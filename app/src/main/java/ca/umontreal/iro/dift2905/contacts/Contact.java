@@ -1,10 +1,13 @@
 package ca.umontreal.iro.dift2905.contacts;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
+
+import java.util.Comparator;
 
 public class Contact extends BaseObservable implements Parcelable {
     private int id;
@@ -148,6 +151,21 @@ public class Contact extends BaseObservable implements Parcelable {
     }
 
     public boolean isNameNull(){
-        return firstName == null && lastName == null;
+        return (firstName == null || firstName.replaceAll(" ", "").isEmpty())  &&
+                (lastName == null || lastName.replaceAll(" ", "").isEmpty());
+    }
+}
+
+class SortbyName implements Comparator<Contact>
+{
+    // Used for sorting in ascending order of
+    // roll number
+    public int compare(Contact a, Contact b)
+    {
+        int compare = a.getFirstName().toLowerCase().compareTo(b.getFirstName().toLowerCase());
+        if(compare != 0)
+            return compare;
+        else
+            return a.getLastName().toLowerCase().compareTo(b.getLastName().toLowerCase());
     }
 }

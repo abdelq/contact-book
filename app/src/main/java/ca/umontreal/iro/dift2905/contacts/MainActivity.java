@@ -8,6 +8,7 @@ import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,11 +37,14 @@ public class MainActivity extends AppCompatActivity {
         this.setTitle(getResources().getString(R.string.all));
 
         RecyclerView contactList = findViewById(R.id.contact_list);
-        contactList.setHasFixedSize(true);
+        contactList.setHasFixedSize(false);
+        contactList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         contactList.setAdapter(adapter);
 
-        ItemTouchHelper touchHelper = new ItemTouchHelper(new ContactSwipeCallback(getBaseContext()));
+        ItemTouchHelper touchHelper = new ItemTouchHelper((new ContactSwipeCallback(getBaseContext(), adapter)));
         touchHelper.attachToRecyclerView(contactList);
+
+
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setSelectedItemId(favorites? R.id.navigation_fav : R.id.navigation_all);
@@ -67,6 +71,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        update(favorites);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         update(favorites);
     }
 
