@@ -146,4 +146,10 @@ public class Contact extends BaseObservable implements Parcelable {
         dest.writeString(email);
         dest.writeInt(isFavorite ? 1 : 0);
     }
+
+    public boolean isNameNull(){
+        if(this.firstName == null && this.lastName == null)
+            return true;
+        return false;
+    }
 }

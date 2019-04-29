@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static ca.umontreal.iro.dift2905.contacts.DBHelper.ContactColumns.*;
@@ -49,27 +50,39 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
-    List<Contact> getContacts(boolean favorite) {
+    List<Contact> getContactsFiltered(boolean favorite, String filter) {
         String selection = COLUMN_NAME_FAVORITE + " = ?";
         String[] selectionArgs = new String[]{favorite ? "1" : "0"};
         String sortOrder = String.format("%s ASC, %s ASC",
                 COLUMN_NAME_FIRSTNAME, COLUMN_NAME_LASTNAME);
+        Cursor cur;
 
-        Cursor cur = db.query(ContactColumns.TABLE_NAME, null,
-                selection, selectionArgs,
-                null, null, sortOrder
-        );
-
+        if(favorite)
+            cur = db.query(ContactColumns.TABLE_NAME, null,
+                    selection, selectionArgs,
+                    null, null, sortOrder
+            );
+        else
+            cur = db.query(ContactColumns.TABLE_NAME, null,
+                    null, null,
+                    null, null, sortOrder
+            );
         List<Contact> contacts = new ArrayList<>();
-        for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext())
-            contacts.add(new Contact(
-                    cur.getInt(cur.getColumnIndex(_ID)),
-                    cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME)),
-                    cur.getString(cur.getColumnIndex(COLUMN_NAME_LASTNAME)),
-                    cur.getString(cur.getColumnIndex(COLUMN_NAME_PHONE)),
-                    cur.getString(cur.getColumnIndex(COLUMN_NAME_EMAIL)),
-                    cur.getInt(cur.getColumnIndex(COLUMN_NAME_FAVORITE))
-            ));
+        for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
+            String firstN = cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME));
+            String lastN = cur.getString(cur.getColumnIndex(COLUMN_NAME_LASTNAME));
+
+            if((firstN != null && firstN.toLowerCase().startsWith(filter.toLowerCase())) ||
+                    (lastN != null && lastN.toLowerCase().startsWith(filter.toLowerCase())))
+                contacts.add(new Contact(
+                        cur.getInt(cur.getColumnIndex(_ID)),
+                        cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME)),
+                        cur.getString(cur.getColumnIndex(COLUMN_NAME_LASTNAME)),
+                        cur.getString(cur.getColumnIndex(COLUMN_NAME_PHONE)),
+                        cur.getString(cur.getColumnIndex(COLUMN_NAME_EMAIL)),
+                        cur.getInt(cur.getColumnIndex(COLUMN_NAME_FAVORITE))
+                ));
+        }
         cur.close();
 
         return contacts;

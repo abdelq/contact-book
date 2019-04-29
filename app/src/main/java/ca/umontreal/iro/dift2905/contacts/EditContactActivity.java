@@ -30,15 +30,20 @@ public class EditContactActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.save) {
             Contact contact = binding.getContact();
-            DBHelper dbHelper = new DBHelper(getBaseContext());
 
-            if (contact.getId() > 0)
-                dbHelper.updateContact(contact);
-            else
-                dbHelper.addContact(contact);
+            if (!contact.isNameNull()) {
+                DBHelper dbHelper = new DBHelper(getBaseContext());
 
+                if (contact.getId() > 0)
+                    dbHelper.updateContact(contact);
+                else
+                    dbHelper.addContact(contact);
+
+                finish();
+                return true;
+
+            }
             finish();
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }

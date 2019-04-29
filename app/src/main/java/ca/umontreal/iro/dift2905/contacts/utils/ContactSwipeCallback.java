@@ -39,6 +39,7 @@ public class ContactSwipeCallback extends SimpleCallback {
     @Override
     public void onSwiped(@NonNull ViewHolder viewHolder, int direction) {
         // TODO
+        System.out.println("ALLOOO");
     }
 
     @Override
