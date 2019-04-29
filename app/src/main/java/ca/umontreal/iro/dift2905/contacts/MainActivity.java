@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ContactAdapter(contacts);
         favorites = false;
         filter = "";
+        this.setTitle(getResources().getString(R.string.all));
 
         RecyclerView contactList = findViewById(R.id.contact_list);
         contactList.setHasFixedSize(true);
@@ -106,6 +107,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void update(boolean favorites){
+        if(favorites)
+            this.setTitle(getResources().getString(R.string.favorites));
+        else
+            this.setTitle(getResources().getString(R.string.all));
         contacts.clear();
         contacts.addAll(new DBHelper(getBaseContext()).getContactsFiltered(favorites, filter));
         adapter.notifyDataSetChanged(); // XXX
