@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
             return false;
         });
     }
-    
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);

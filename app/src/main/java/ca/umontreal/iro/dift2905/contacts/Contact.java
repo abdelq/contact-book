@@ -148,8 +148,6 @@ public class Contact extends BaseObservable implements Parcelable {
     }
 
     public boolean isNameNull(){
-        if(this.firstName == null && this.lastName == null)
-            return true;
-        return false;
+        return firstName == null && lastName == null;
     }
 }
