@@ -9,6 +9,11 @@ import androidx.databinding.Bindable;
 
 import java.util.Comparator;
 
+/**
+ * La classe Contact contient les méthodes qui permettent de représenter
+ * un contact dans la liste de contact du carnet d'adresse en stockant
+ * ses informations.
+ */
 public class Contact extends BaseObservable implements Parcelable {
     private int id;
     private String firstName, lastName;
@@ -30,6 +35,16 @@ public class Contact extends BaseObservable implements Parcelable {
     Contact() {
     }
 
+    /**
+     * Création du contact
+     *
+     * @param id numéro d'identification
+     * @param firstName prénom
+     * @param lastName nom de famille
+     * @param phone numéro de téléphone
+     * @param email adresse email
+     * @param isFavorite true s'il est un favori, false sinon
+     */
     Contact(int id, String firstName, String lastName,
             String phone, String email, int isFavorite) {
         this.id = id;
@@ -40,6 +55,11 @@ public class Contact extends BaseObservable implements Parcelable {
         this.isFavorite = isFavorite == 1;
     }
 
+    /**
+     * Méthode qui lit les informations d'un parcel et les associe au contact.
+     *
+     * @param in parcel qui contient les informations du contact
+     */
     private Contact(Parcel in) {
         id = in.readInt();
         firstName = in.readString();
@@ -49,19 +69,31 @@ public class Contact extends BaseObservable implements Parcelable {
         isFavorite = in.readInt() == 1;
     }
 
+    /**
+     * @return numéro d'identification du contact
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * @param id numéro d'identification du contact
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * @return prénom du contact
+     */
     @Bindable
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * @param firstName prénom du contact
+     */
     public void setFirstName(String firstName) {
         if (this.firstName == null || !this.firstName.equals(firstName)) {
             this.firstName = firstName;
@@ -69,11 +101,17 @@ public class Contact extends BaseObservable implements Parcelable {
         }
     }
 
+    /**
+     * @return nom de famille du contact
+     */
     @Bindable
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * @param lastName nom de famille du contact
+     */
     public void setLastName(String lastName) {
         if (this.lastName == null || !this.lastName.equals(lastName)) {
             this.lastName = lastName;
@@ -81,11 +119,17 @@ public class Contact extends BaseObservable implements Parcelable {
         }
     }
 
+    /**
+     * @return numéro de téléphone du contact
+     */
     @Bindable
     public String getPhone() {
         return phone;
     }
 
+    /**
+     * @param phone numéro de téléphone du contact
+     */
     public void setPhone(String phone) {
         if (this.phone == null || !this.phone.equals(phone)) {
             this.phone = phone;
@@ -93,11 +137,17 @@ public class Contact extends BaseObservable implements Parcelable {
         }
     }
 
+    /**
+     * @return adresse email du contact
+     */
     @Bindable
     public String getEmail() {
         return email;
     }
 
+    /**
+     * @param email adresse email du contact
+     */
     public void setEmail(String email) {
         if (this.email == null || !this.email.equals(email)) {
             this.email = email;
@@ -105,11 +155,19 @@ public class Contact extends BaseObservable implements Parcelable {
         }
     }
 
+    /**
+     * @return true si le contact est favori
+     *         false sinon
+     */
     @Bindable
     public boolean getIsFavorite() {
         return isFavorite;
     }
 
+    /**
+     * @param isFavorite == true s'il est un contact favori
+     *                   == false sinon
+     */
     public void setIsFavorite(boolean isFavorite) {
         if (this.isFavorite != isFavorite) {
             this.isFavorite = isFavorite;
@@ -117,6 +175,9 @@ public class Contact extends BaseObservable implements Parcelable {
         }
     }
 
+    /**
+     * @return les initiales du contact
+     */
     public String getInitials() {
         String initials = "";
         if (firstName != null)
@@ -126,6 +187,9 @@ public class Contact extends BaseObservable implements Parcelable {
         return initials;
     }
 
+    /**
+     * @return le nom complet du contact
+     */
     public String getFullName() {
         String name = "";
         if (firstName != null)
@@ -140,6 +204,12 @@ public class Contact extends BaseObservable implements Parcelable {
         return 0; // XXX
     }
 
+    /**
+     * Méthode qui place les informations du contact dans un parcel
+     *
+     * @param dest parcel dans lequel les informations sont stoquées
+     * @param flags
+     */
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
@@ -158,28 +228,40 @@ public class Contact extends BaseObservable implements Parcelable {
         return lastName == null || lastName.replaceAll(" ", "").isEmpty();
     }
 
+    /**
+     * Méthode qui vérifie si les champs de prénom et nom de famille sont vides.
+     *
+     * @return true s'ils sont vides
+     *         false sinon
+     */
     public boolean isNameNull(){
         return isFirstNameNull()  && isLastNameNull();
     }
 }
 
+/**
+ * La classe SortbyName contient une methode qui présente la comparaison
+ * faite entre les contacts pour les classer en ordre alphabétque
+ */
 class SortbyName implements Comparator<Contact> {
+    /**
+     * Méthode qui compare lexicographiquement deux contacts
+     *
+     * @param a premier contact
+     * @param b deuxième contact
+     * @return valeur de la comparaison
+     */
     public int compare(Contact a, Contact b) {
         if(!a.isFirstNameNull() && !b.isFirstNameNull()){
             int compare = a.getFirstName().toLowerCase().compareTo(b.getFirstName().toLowerCase());
-            if(compare != 0) {
+            if(compare != 0)
                 return compare;
-            }
-        } else if (a.isFirstNameNull() ^ b.isFirstNameNull()){
-            int first = a.isFirstNameNull() ? 1 : -1;
-            return first;
-        }
+        } else if (a.isFirstNameNull() ^ b.isFirstNameNull())
+            return a.isFirstNameNull() ? 1 : -1;
         if(!a.isLastNameNull() && !b.isLastNameNull()){
             return a.getLastName().toLowerCase().compareTo(b.getLastName().toLowerCase());
-        } else if (a.isLastNameNull() ^ b.isLastNameNull()){
-            int first = a.getLastName() == null ? 1 : -1;
-            return first;
-        }
+        } else if (a.isLastNameNull() ^ b.isLastNameNull())
+            return  a.getLastName() == null ? 1 : -1;
 
         return 0;
     }

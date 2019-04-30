@@ -8,6 +8,10 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 
 import ca.umontreal.iro.dift2905.contacts.R;
 
+/**
+ * La classe ContactViewHolder contient les éléments qui sont
+ * affichés dans la liste de contacts pour les représenter.
+ */
 class ContactViewHolder extends ViewHolder {
     TextView initialsTextView;
     TextView nameTextView;

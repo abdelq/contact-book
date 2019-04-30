@@ -19,6 +19,11 @@ import java.util.List;
 import ca.umontreal.iro.dift2905.contacts.utils.ContactAdapter;
 import ca.umontreal.iro.dift2905.contacts.utils.ContactSwipeCallback;
 
+/**
+ * La classe MainActivity fournit les méthodes pour l'activité principale
+ * qui affiche la liste de tous les contacts ou des contacts favoris, et qui
+ * offre l'option d'ajouter un nouveau contact.
+ */
 public class MainActivity extends AppCompatActivity {
     ContactAdapter adapter;
     List<Contact> contacts;
@@ -45,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
         touchHelper.attachToRecyclerView(contactList);
 
 
-
+        /* Barre de navigation inférieure qui permet de passer de l'affichage de tous les
+           contacts à l'affichage des favoris seulement */
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setSelectedItemId(favorites? R.id.navigation_fav : R.id.navigation_all);
         navigation.setOnNavigationItemSelectedListener(item -> {
@@ -80,6 +86,11 @@ public class MainActivity extends AppCompatActivity {
         update(favorites);
     }
 
+    /**
+     * Méthode qui crée le menu d'options dans le coin supérieur droit
+     *
+     * @param menu
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -112,6 +123,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * Méthode qui ouvre l'activité d'édition de contact lors d'un clic
+     * sur le bouton "nouveau contact"
+     *
+     * @param item bouton cliqué dans le menu
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.new_contact) {
@@ -122,6 +139,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Méthode qui met à jour l'affichage de la liste de contacts
+     *
+     * @param favorites == true si on veut visualiser les favoris
+     *                  == false si on veut visualiser tous les contacts
+     */
     public void update(boolean favorites){
         if(favorites)
             this.setTitle(getResources().getString(R.string.favorites));

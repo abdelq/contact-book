@@ -6,6 +6,7 @@
 - Clique pour appeler
 - "Utilisez les outils de Data Bindings pour lier les différents contacts à chaque item de la liste." de 2.7
 - Souligné lors de la recherche de contact (Bonus)
+- JavaDoc
 ```
 
 
