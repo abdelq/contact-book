@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         contacts = new DBHelper(getBaseContext()).getContacts();
-        adapter = new ContactAdapter(contacts);
+        adapter = new ContactAdapter(contacts, this);
         favorites = false;
         filter = "";
         this.setTitle(getResources().getString(R.string.all));
