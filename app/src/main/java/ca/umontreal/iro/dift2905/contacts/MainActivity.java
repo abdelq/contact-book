@@ -133,7 +133,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.new_contact) {
             Intent intent =new Intent(this, EditContactActivity.class);
-            intent.putExtra("contact", new Contact());
+            Bundle extras = new Bundle();
+            extras.putParcelable("contact", new Contact());
+            extras.putString("title", "New contact");
+            intent.putExtras(extras);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
