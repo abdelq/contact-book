@@ -97,6 +97,7 @@ public class Contact extends BaseObservable implements Parcelable {
     public void setFirstName(String firstName) {
         if (this.firstName == null || !this.firstName.equals(firstName)) {
             this.firstName = firstName;
+            notifyPropertyChanged(BR.contact);
         }
     }
 
@@ -114,6 +115,7 @@ public class Contact extends BaseObservable implements Parcelable {
     public void setLastName(String lastName) {
         if (this.lastName == null || !this.lastName.equals(lastName)) {
             this.lastName = lastName;
+            notifyPropertyChanged(BR.contact);
         }
     }
 
@@ -131,6 +133,7 @@ public class Contact extends BaseObservable implements Parcelable {
     public void setPhone(String phone) {
         if (this.phone == null || !this.phone.equals(phone)) {
             this.phone = phone;
+            notifyPropertyChanged(BR.contact);
         }
     }
 
@@ -148,6 +151,7 @@ public class Contact extends BaseObservable implements Parcelable {
     public void setEmail(String email) {
         if (this.email == null || !this.email.equals(email)) {
             this.email = email;
+            notifyPropertyChanged(BR.contact);
         }
     }
 
@@ -167,6 +171,7 @@ public class Contact extends BaseObservable implements Parcelable {
     public void setIsFavorite(boolean isFavorite) {
         if (this.isFavorite != isFavorite) {
             this.isFavorite = isFavorite;
+            notifyPropertyChanged(BR.contact);
         }
     }
 
