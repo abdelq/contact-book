@@ -2,6 +2,7 @@ package ca.umontreal.iro.dift2905.contacts.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.net.Uri;
@@ -58,7 +59,10 @@ public class ContactAdapter extends Adapter<ContactViewHolder> {
             @Override
             public boolean onLongClick(View v) {
                 Intent intent =new Intent(mContext, EditContactActivity.class);
-                intent.putExtra("contact", contact);
+                Bundle extras = new Bundle();
+                extras.putParcelable("contact", contact);
+                extras.putString("title", "Edit contact");
+                intent.putExtras(extras);
                 mContext.startActivity(intent);
                 return false;
             }
