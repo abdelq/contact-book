@@ -150,22 +150,37 @@ public class Contact extends BaseObservable implements Parcelable {
         dest.writeInt(isFavorite ? 1 : 0);
     }
 
+    public boolean isFirstNameNull(){
+        return  firstName == null || firstName.replaceAll(" ", "").isEmpty();
+    }
+
+    public boolean isLastNameNull(){
+        return lastName == null || lastName.replaceAll(" ", "").isEmpty();
+    }
+
     public boolean isNameNull(){
-        return (firstName == null || firstName.replaceAll(" ", "").isEmpty())  &&
-                (lastName == null || lastName.replaceAll(" ", "").isEmpty());
+        return isFirstNameNull()  && isLastNameNull();
     }
 }
 
-class SortbyName implements Comparator<Contact>
-{
-    // Used for sorting in ascending order of
-    // roll number
-    public int compare(Contact a, Contact b)
-    {
-        int compare = a.getFirstName().toLowerCase().compareTo(b.getFirstName().toLowerCase());
-        if(compare != 0)
-            return compare;
-        else
+class SortbyName implements Comparator<Contact> {
+    public int compare(Contact a, Contact b) {
+        if(!a.isFirstNameNull() && !b.isFirstNameNull()){
+            int compare = a.getFirstName().toLowerCase().compareTo(b.getFirstName().toLowerCase());
+            if(compare != 0) {
+                return compare;
+            }
+        } else if (a.isFirstNameNull() ^ b.isFirstNameNull()){
+            int first = a.isFirstNameNull() ? 1 : -1;
+            return first;
+        }
+        if(!a.isLastNameNull() && !b.isLastNameNull()){
             return a.getLastName().toLowerCase().compareTo(b.getLastName().toLowerCase());
+        } else if (a.isLastNameNull() ^ b.isLastNameNull()){
+            int first = a.getLastName() == null ? 1 : -1;
+            return first;
+        }
+
+        return 0;
     }
 }
