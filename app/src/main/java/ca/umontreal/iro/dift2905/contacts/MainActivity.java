@@ -1,9 +1,11 @@
 package ca.umontreal.iro.dift2905.contacts;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
@@ -16,8 +18,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
-import ca.umontreal.iro.dift2905.contacts.utils.ContactAdapter;
-import ca.umontreal.iro.dift2905.contacts.utils.ContactSwipeCallback;
+import ca.umontreal.iro.dift2905.contacts.recyclerutils.ContactAdapter;
+import ca.umontreal.iro.dift2905.contacts.recyclerutils.ContactSwipeCallback;
 
 /**
  * La classe MainActivity fournit les méthodes pour l'activité principale
@@ -26,7 +28,7 @@ import ca.umontreal.iro.dift2905.contacts.utils.ContactSwipeCallback;
  */
 public class MainActivity extends AppCompatActivity {
     ContactAdapter adapter;
-    List<Contact> contacts;
+    static List<Contact> contacts;
     boolean favorites;
     String filter;
 
@@ -36,7 +38,28 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         contacts = new DBHelper(getBaseContext()).getContacts();
-        adapter = new ContactAdapter(contacts, this);
+        adapter = new ContactAdapter(contacts, new ContactAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                /* Permet un appel lors d'un clic sur un contact */
+                Intent call = new Intent(Intent.ACTION_DIAL);
+                call.setData(Uri.parse("tel:" + contacts.get(position).getPhone()));
+                startActivity(call);
+            }
+
+            @Override
+            public boolean onItemLongClick(View view, int position) {
+                //view.get
+                /* Démarre l'activité d'édition de contact lors d'un long clic sur un contact */
+                Intent intent = new Intent(MainActivity.this, EditContactActivity.class);
+                Bundle extras = new Bundle();
+                extras.putParcelable("contact", contacts.get(position));
+                extras.putString("title", "Edit contact");
+                intent.putExtras(extras);
+                startActivity(intent);
+                return false;
+            }
+        });
         favorites = false;
         filter = "";
         this.setTitle(getResources().getString(R.string.all));

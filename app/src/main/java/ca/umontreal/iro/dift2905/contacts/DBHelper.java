@@ -145,6 +145,19 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(ContactColumns.TABLE_NAME, selection, selectionArgs);
     }
 
+    /**
+     * Méthode qui supprime un contact de la base de donnée
+     *
+     * @param index contact que l'on veut supprimer
+     */
+    public void deleteContact(int index) {
+        String selection = _ID + " = ?";
+        String[] selectionArgs = new String[]{String.valueOf(MainActivity.contacts.get(index).getId())};
+
+        db.delete(ContactColumns.TABLE_NAME, selection, selectionArgs);
+        MainActivity.contacts.remove(index);
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(String.format(
