@@ -21,7 +21,12 @@ public class EditContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_edit_contact);
 
-        binding.setContact(getIntent().getParcelableExtra("contact"));
+        Bundle extras = getIntent().getExtras();
+
+        binding.setContact(extras.getParcelable("contact"));
+
+        String title = extras.getString("title");
+        this.setTitle(title);
     }
 
     /**
