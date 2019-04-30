@@ -3,6 +3,8 @@ package ca.umontreal.iro.dift2905.contacts.utils;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.net.Uri;
@@ -54,6 +56,15 @@ public class ContactAdapter extends Adapter<ContactViewHolder> {
         holder.initialsTextView.setText(contact.getInitials());
         holder.nameTextView.setText(contact.getFullName());
         
+        /* Soulignement des chaines de caractères d'un contact lors d'une recherche */
+        int start_underline = contact.getFullName().toLowerCase().indexOf(filter.toLowerCase());
+        if (start_underline != -1) {
+            SpannableString content = new SpannableString(contact.getFullName());
+            content.setSpan(new UnderlineSpan(), start_underline,
+                    start_underline + filter.length(), 0);
+            holder.nameTextView.setText(content);
+        }
+        
         /* Démarre l'activité d'édition de contact lors d'un long clic sur un contact */
         holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -85,6 +96,15 @@ public class ContactAdapter extends Adapter<ContactViewHolder> {
     @Override
     public int getItemCount() {
         return mContacts.size();
+    }
+    
+    /**
+     * Méthode qui met à jour le filtre de recherche
+     *
+     * @param filter filtre de recherche
+     */
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 
     /**
