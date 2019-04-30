@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
@@ -60,6 +61,16 @@ public class ContactAdapter extends Adapter<ContactViewHolder> {
                 intent.putExtra("contact", contact);
                 mContext.startActivity(intent);
                 return false;
+            }
+        });
+        
+        /* Permet un appel lors d'un clic sur un contact */
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent call = new Intent(Intent.ACTION_DIAL);
+                call.setData(Uri.parse("tel:"+contact.getPhone()));
+                mContext.startActivity(call);
             }
         });
     }
