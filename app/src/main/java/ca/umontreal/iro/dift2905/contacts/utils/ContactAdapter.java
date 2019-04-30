@@ -29,6 +29,7 @@ import static android.view.LayoutInflater.from;
 public class ContactAdapter extends Adapter<ContactViewHolder> {
     private List<Contact> mContacts;
     private Context mContext;
+    private String filter = "";
 
     public ContactAdapter(List<Contact> contacts, Context context) {
         mContacts = contacts;
