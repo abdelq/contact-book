@@ -14,6 +14,10 @@ import java.util.List;
 
 import static ca.umontreal.iro.dift2905.contacts.DBHelper.ContactColumns.*;
 
+/**
+ * La classe DBHelper s'occupe des opérations qui gèrent la base
+ * de données contenant les informations sur les contacts.
+ */
 public class DBHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "Contacts.db";
@@ -26,6 +30,9 @@ public class DBHelper extends SQLiteOpenHelper {
             db = getWritableDatabase();
     }
 
+    /**
+     * @return une liste contenant l'ensemble des contacts.
+     */
     List<Contact> getContacts() {
         Cursor cur = db.query(ContactColumns.TABLE_NAME, null,
                 null, null, null, null,
@@ -49,6 +56,11 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
 
+    /**
+     * @param favorite
+     * @param filter
+     * @return une liste de contacts filtrée.
+     */
     List<Contact> getContactsFiltered(boolean favorite, String filter) {
         String selection = COLUMN_NAME_FAVORITE + " = ?";
         String[] selectionArgs = new String[]{favorite ? "1" : "0"};
@@ -86,6 +98,11 @@ public class DBHelper extends SQLiteOpenHelper {
         return contacts;
     }
 
+    /**
+     * Méthode qui ajoute un contact à la base de données
+     *
+     * @param contact contact à ajouter
+     */
     void addContact(Contact contact) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME_FIRSTNAME, contact.getFirstName());
@@ -97,6 +114,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert(ContactColumns.TABLE_NAME, null, values);
     }
 
+    /**
+     * Méthode qui met à jour un contact de la base de données
+     *
+     * @param contact contact à modifier
+     */
     void updateContact(Contact contact) {
         ContentValues values = new ContentValues();
         values.put(COLUMN_NAME_FIRSTNAME, contact.getFirstName());
@@ -111,6 +133,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.update(ContactColumns.TABLE_NAME, values, selection, selectionArgs);
     }
 
+    /**
+     * Méthode qui supprime un contact de la base de donnée
+     *
+     * @param contact contact que l'on veut supprimer
+     */
     public void deleteContact(Contact contact) {
         String selection = _ID + " = ?";
         String[] selectionArgs = new String[]{String.valueOf(contact.getId())};
