@@ -18,6 +18,10 @@ import ca.umontreal.iro.dift2905.contacts.R;
 
 import static java.util.Objects.requireNonNull;
 
+/**
+ * La classe ContactSwipeCallback contient des méthodes qui traitent les
+ * actions apportées aux contacts du carnet d'adresse.
+ */
 public class ContactSwipeCallback extends SimpleCallback {
     private final ContactAdapter adapter;
     private Context context;
@@ -34,6 +38,14 @@ public class ContactSwipeCallback extends SimpleCallback {
         iconHeight = requireNonNull(icon).getIntrinsicHeight();
     }
 
+    /**
+     * Methode qui traite le mouvement de la liste
+     *
+     * @param recyclerView
+     * @param viewHolder
+     * @param target
+     * @return
+     */
     @Override
     public boolean onMove(@NonNull RecyclerView recyclerView,
                           @NonNull ViewHolder viewHolder,
@@ -41,6 +53,12 @@ public class ContactSwipeCallback extends SimpleCallback {
         return false; // TODO
     }
 
+    /**
+     * Méthode qui traite le glissement sur un contact
+     *
+     * @param viewHolder
+     * @param direction direction du glissement
+     */
     @Override
     public void onSwiped(@NonNull ViewHolder viewHolder, int direction) {
         adapter.removeContact(context, viewHolder.getAdapterPosition());
@@ -48,12 +66,22 @@ public class ContactSwipeCallback extends SimpleCallback {
 
     }
 
+    /**
+     * Méthode qui gère l'affichage de l'icone "poubelle" lorsqu'on glisse
+     * le contact à gauche
+     *
+     * @param canvas
+     * @param recyclerView
+     * @param viewHolder
+     * @param dX
+     * @param dY
+     * @param actionState
+     * @param isCurrentlyActive
+     */
     @Override
     public void onChildDraw(@NonNull Canvas canvas,
                             @NonNull RecyclerView recyclerView, @NonNull ViewHolder viewHolder,
                             float dX, float dY, int actionState, boolean isCurrentlyActive) {
-        // Cette méthode gère l'affichace de l'icône "poubelle" lorsqu'on glisse le contach à
-        // gauche. TODO IL N'EST PAS NÉCESSAIRE DE LA MODIFIER.
 
         View itemView = viewHolder.itemView;
         int itemHeight = itemView.getBottom() - itemView.getTop();
