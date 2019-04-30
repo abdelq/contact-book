@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 contacts.clear();
                 System.out.println(favorites);
                 contacts.addAll(new DBHelper(getBaseContext()).getContactsFiltered(favorites, filter));
+                adapter.setFilter(filter);
                 adapter.notifyDataSetChanged();
                 return false;
             }
