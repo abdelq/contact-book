@@ -25,7 +25,7 @@ public class ContactSwipeCallback extends SimpleCallback {
     private Drawable icon;
 
     public ContactSwipeCallback(Context context, ContactAdapter adapter) {
-        super(ItemTouchHelper.UP, ItemTouchHelper.LEFT);
+        super(0, ItemTouchHelper.LEFT);
 
         /* XXX */
         this.adapter = adapter;
