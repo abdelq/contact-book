@@ -6,6 +6,8 @@ import androidx.databinding.Bindable;
 
 import java.io.Serializable;
 
+import static java.lang.Character.toUpperCase;
+
 /**
  * Contact est un modèle relié à l'édition de contacts par liaison de données
  * bidirectionnelle.
@@ -164,9 +166,9 @@ public class Contact extends BaseObservable implements Serializable {
         StringBuilder initials = new StringBuilder();
 
         if (hasFirstName())
-            initials.append(firstName.charAt(0));
+            initials.append(toUpperCase(firstName.charAt(0)));
         if (hasLastName())
-            initials.append(lastName.charAt(0));
+            initials.append(toUpperCase(lastName.charAt(0)));
 
         return initials.toString();
     }

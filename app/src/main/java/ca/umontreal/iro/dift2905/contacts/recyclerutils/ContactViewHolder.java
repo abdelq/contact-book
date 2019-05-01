@@ -43,7 +43,7 @@ class ContactViewHolder extends ViewHolder {
     void setName(String name, int startIndex, int endIndex) {
         SpannableString text = new SpannableString(name);
         if (startIndex != -1)
-            text.setSpan(new UnderlineSpan(), startIndex, endIndex, SPAN_EXCLUSIVE_EXCLUSIVE); // XXX Flag
+            text.setSpan(new UnderlineSpan(), startIndex, endIndex, SPAN_EXCLUSIVE_EXCLUSIVE);
         nameTextView.setText(text);
     }
 

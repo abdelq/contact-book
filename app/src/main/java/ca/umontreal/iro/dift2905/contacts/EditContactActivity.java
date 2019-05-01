@@ -43,7 +43,7 @@ public class EditContactActivity extends AppCompatActivity {
             return super.onOptionsItemSelected(item);
 
         if (contact.hasName()) {
-            DBHelper dbHelper = new DBHelper(getBaseContext());
+            DBHelper dbHelper = new DBHelper(this);
             if (contact.getId() > 0)
                 dbHelper.updateContact(contact);
             else
@@ -51,7 +51,7 @@ public class EditContactActivity extends AppCompatActivity {
 
             finish();
         } else {
-            makeText(getBaseContext(), getString(R.string.name_error), Toast.LENGTH_LONG).show();
+            makeText(this, getString(R.string.name_error), Toast.LENGTH_LONG).show();
         }
 
         return true;

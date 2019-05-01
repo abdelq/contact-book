@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">Contacts</string>
     <string name="favorites">Favorites</string>
     <string name="all">All</string>
     <string name="first_name">First name</string>
@@ -12,4 +11,7 @@
     <string name="filter">Filter</string>
     <string name="edit_contact">Edit contact</string>
     <string name="name_error">Contact must have a valid name</string>
+    <string name="all_contacts">All contacts</string>
+    <string name="favorite_contacts">Favorite contacts</string>
+    <string name="app_name">Contacts</string>
 </resources>

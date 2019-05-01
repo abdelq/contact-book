@@ -7,8 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -19,7 +19,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.List;
 
 import ca.umontreal.iro.dift2905.contacts.recyclerutils.ContactAdapter;
+import ca.umontreal.iro.dift2905.contacts.recyclerutils.ContactAdapter.OnItemClickListener;
 import ca.umontreal.iro.dift2905.contacts.recyclerutils.ContactSwipeCallback;
+
+import static androidx.recyclerview.widget.DividerItemDecoration.VERTICAL;
 
 /**
  * MainActivity affiche la liste de tous les contacts ou seulement les favoris.
@@ -27,66 +30,56 @@ import ca.umontreal.iro.dift2905.contacts.recyclerutils.ContactSwipeCallback;
  * le nom.
  */
 public class MainActivity extends AppCompatActivity {
-    ContactAdapter adapter;
-    static List<Contact> contacts;
-    boolean favorites;
-    String filter;
+    private List<Contact> contacts;
+    private ContactAdapter adapter;
+    private boolean favorites;
+    private String filter = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTitle(getString(R.string.all_contacts));
 
-        contacts = new DBHelper(getBaseContext()).getContacts();
-        adapter = new ContactAdapter(contacts, new ContactAdapter.OnItemClickListener() {
+        contacts = new DBHelper(this).getContacts();
+        adapter = new ContactAdapter(contacts, new OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                /* Permet un appel lors d'un clic sur un contact */
-                Intent call = new Intent(Intent.ACTION_DIAL);
-                call.setData(Uri.parse("tel:" + contacts.get(position).getPhone()));
-                startActivity(call);
+                Intent dial = new Intent(Intent.ACTION_DIAL,
+                        Uri.parse("tel:" + contacts.get(position).getPhone()));
+                startActivity(dial); // Appel du contact
             }
 
             @Override
             public boolean onItemLongClick(View view, int position) {
-                //view.get
-                /* Démarre l'activité d'édition de contact lors d'un long clic sur un contact */
                 Intent intent = new Intent(MainActivity.this, EditContactActivity.class);
-                Bundle extras = new Bundle();
-                extras.putSerializable("contact", contacts.get(position));
-                //extras.putParcelable("contact", contacts.get(position));
-                extras.putString("title", "Edit contact");
-                intent.putExtras(extras);
-                startActivity(intent);
-                return false;
+                intent.putExtra("contact", contacts.get(position));
+                startActivity(intent); // Édition du contact
+                return true;
             }
         });
-        favorites = false;
-        filter = "";
-        this.setTitle(getResources().getString(R.string.all));
 
+        /* Liste de contacts */
         RecyclerView contactList = findViewById(R.id.contact_list);
-        contactList.setHasFixedSize(false);
-        contactList.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
         contactList.setAdapter(adapter);
+        contactList.setHasFixedSize(true);
+        contactList.addItemDecoration(new DividerItemDecoration(this, VERTICAL));
 
-        ItemTouchHelper touchHelper = new ItemTouchHelper((new ContactSwipeCallback(getBaseContext(), adapter)));
-        touchHelper.attachToRecyclerView(contactList);
+        ItemTouchHelper helper = new ItemTouchHelper(new ContactSwipeCallback(this, adapter));
+        helper.attachToRecyclerView(contactList);
 
-
-        /* Barre de navigation inférieure qui permet de passer de l'affichage de tous les
-           contacts à l'affichage des favoris seulement */
+        /* Barre de navigation du bas */
         BottomNavigationView navigation = findViewById(R.id.navigation);
-        navigation.setSelectedItemId(favorites? R.id.navigation_fav : R.id.navigation_all);
+        navigation.setSelectedItemId(R.id.navigation_all);
         navigation.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case R.id.navigation_fav:
                     favorites = true;
-                    update(favorites);
+                    update();
                     return true;
                 case R.id.navigation_all:
                     favorites = false;
-                    update(favorites);
+                    update();
                     return true;
             }
             return false;
@@ -94,40 +87,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        update(favorites);
+        update(); // XXX
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        update(favorites);
+        update(); // XXX
     }
 
-    /**
-     * Méthode qui crée le menu d'options dans le coin supérieur droit
-     *
-     * @param menu
-     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        MenuItem search = menu.findItem(R.id.search_contact);
-        SearchView view = (SearchView) search.getActionView();
+        SearchView view = (SearchView) menu.findItem(R.id.search_contact).getActionView();
 
         view.setOnCloseListener(() -> {
             filter = "";
             return false;
         });
 
-        view.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        view.setOnQueryTextListener(new OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -135,51 +117,37 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                /* XXX */
                 filter = newText;
-                contacts.clear();
-                System.out.println(favorites);
-                contacts.addAll(new DBHelper(getBaseContext()).getContacts(favorites, filter));
                 adapter.setFilter(filter);
-                adapter.notifyDataSetChanged();
-                return false;
+                update();
+                return true;
             }
         });
 
         return super.onCreateOptionsMenu(menu);
     }
 
-    /**
-     * Méthode qui ouvre l'activité d'édition de contact lors d'un clic
-     * sur le bouton "nouveau contact"
-     *
-     * @param item bouton cliqué dans le menu
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.new_contact) {
-            Intent intent =new Intent(this, EditContactActivity.class);
-            Bundle extras = new Bundle();
-            extras.putSerializable("contact", new Contact());
-            extras.putString("title", "New contact");
-            intent.putExtras(extras);
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
+        if (item.getItemId() != R.id.new_contact)
+            return super.onOptionsItemSelected(item);
+
+        Intent intent = new Intent(this, EditContactActivity.class);
+        intent.putExtra("contact", new Contact());
+        startActivity(intent);
+        return true;
     }
 
     /**
-     * Méthode qui met à jour l'affichage de la liste de contacts
-     *
-     * @param favorites == true si on veut visualiser les favoris
-     *                  == false si on veut visualiser tous les contacts
+     * Met à jour l'affichage de la liste de contacts.
      */
-    public void update(boolean favorites){
-        if(favorites)
-            this.setTitle(getResources().getString(R.string.favorites));
-        else
-            this.setTitle(getResources().getString(R.string.all));
+    public void update() {
+        setTitle(getString(favorites ? R.string.favorite_contacts : R.string.all_contacts));
+
+        /* XXX */
         contacts.clear();
-        contacts.addAll(new DBHelper(getBaseContext()).getContacts(favorites, filter));
-        adapter.notifyDataSetChanged(); // XXX
+        contacts.addAll(new DBHelper(this).getContacts(favorites, filter));
+        adapter.notifyDataSetChanged();
     }
 }

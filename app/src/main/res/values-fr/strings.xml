@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Contacts</string>
     <string name="all">Tout</string>
     <string name="email">Adresse électronique</string>
     <string name="favorite">Favori</string>
@@ -13,4 +12,7 @@
     <string name="filter">Filtrer</string>
     <string name="edit_contact">Modifier le contact</string>
     <string name="name_error">Le contact doit avoir un nom valide</string>
+    <string name="all_contacts">Tous les contacts</string>
+    <string name="favorite_contacts">Contacts favoris</string>
+    <string name="app_name">Contacts</string>
 </resources>
