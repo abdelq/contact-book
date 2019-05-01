@@ -8,11 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static ca.umontreal.iro.dift2905.contacts.DBHelper.ContactColumns.*;
+
 
 /**
  * La classe DBHelper s'occupe des opérations qui gèrent la base
@@ -36,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
     List<Contact> getContacts() {
         Cursor cur = db.query(ContactColumns.TABLE_NAME, null,
                 null, null, null, null,
-                null
+                COLUMN_NAME_FIRSTNAME + ", " + COLUMN_NAME_LASTNAME
         );
 
         List<Contact> contacts = new ArrayList<>();
@@ -51,7 +50,6 @@ public class DBHelper extends SQLiteOpenHelper {
             ));
         cur.close();
 
-        Collections.sort(contacts, new SortbyName());
         return contacts;
     }
 
@@ -66,22 +64,22 @@ public class DBHelper extends SQLiteOpenHelper {
         String[] selectionArgs = new String[]{favorite ? "1" : "0"};
         Cursor cur;
 
-        if(favorite)
+        if (favorite)
             cur = db.query(ContactColumns.TABLE_NAME, null,
                     selection, selectionArgs,
-                    null, null, null
+                    null, null, COLUMN_NAME_FIRSTNAME + ", " + COLUMN_NAME_LASTNAME
             );
         else
             cur = db.query(ContactColumns.TABLE_NAME, null,
                     null, null,
-                    null, null, null
+                    null, null, COLUMN_NAME_FIRSTNAME + ", " + COLUMN_NAME_LASTNAME
             );
         List<Contact> contacts = new ArrayList<>();
         for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
             String firstN = cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME));
             String lastN = cur.getString(cur.getColumnIndex(COLUMN_NAME_LASTNAME));
 
-            if((firstN != null && firstN.toLowerCase().startsWith(filter.toLowerCase())) ||
+            if ((firstN != null && firstN.toLowerCase().startsWith(filter.toLowerCase())) ||
                     (lastN != null && lastN.toLowerCase().startsWith(filter.toLowerCase())))
                 contacts.add(new Contact(
                         cur.getInt(cur.getColumnIndex(_ID)),
@@ -94,7 +92,6 @@ public class DBHelper extends SQLiteOpenHelper {
         }
         cur.close();
 
-        Collections.sort(contacts, new SortbyName());
         return contacts;
     }
 
@@ -145,19 +142,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.delete(ContactColumns.TABLE_NAME, selection, selectionArgs);
     }
 
-    /**
-     * Méthode qui supprime un contact de la base de donnée
-     *
-     * @param index contact que l'on veut supprimer
-     */
-    public void deleteContact(int index) {
-        String selection = _ID + " = ?";
-        String[] selectionArgs = new String[]{String.valueOf(MainActivity.contacts.get(index).getId())};
-
-        db.delete(ContactColumns.TABLE_NAME, selection, selectionArgs);
-        MainActivity.contacts.remove(index);
-    }
-
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(String.format(
@@ -180,6 +164,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     static class ContactColumns implements BaseColumns {
         static final String TABLE_NAME = "contact";
+
         static final String COLUMN_NAME_FIRSTNAME = "firstname";
         static final String COLUMN_NAME_LASTNAME = "lastname";
         static final String COLUMN_NAME_PHONE = "phone";

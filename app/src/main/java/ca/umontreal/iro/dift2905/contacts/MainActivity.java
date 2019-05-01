@@ -22,9 +22,9 @@ import ca.umontreal.iro.dift2905.contacts.recyclerutils.ContactAdapter;
 import ca.umontreal.iro.dift2905.contacts.recyclerutils.ContactSwipeCallback;
 
 /**
- * La classe MainActivity fournit les méthodes pour l'activité principale
- * qui affiche la liste de tous les contacts ou des contacts favoris, et qui
- * offre l'option d'ajouter un nouveau contact.
+ * MainActivity affiche la liste de tous les contacts ou seulement les favoris.
+ * Il offre aussi l'option d'ajouter un nouveau contact et d'en filtrer selon
+ * le nom.
  */
 public class MainActivity extends AppCompatActivity {
     ContactAdapter adapter;

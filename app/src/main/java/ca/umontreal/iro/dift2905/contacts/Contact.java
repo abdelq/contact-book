@@ -1,19 +1,14 @@
 package ca.umontreal.iro.dift2905.contacts;
 
-import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
 import java.io.Serializable;
-import java.util.Comparator;
 
 /**
- * La classe Contact contient les méthodes qui permettent de représenter
- * un contact dans la liste de contact du carnet d'adresse en stockant
- * ses informations.
+ * Contact est un modèle relié à l'édition de contacts par liaison de données
+ * bidirectionnelle.
  */
 public class Contact extends BaseObservable implements Serializable {
     private int id;
@@ -25,14 +20,14 @@ public class Contact extends BaseObservable implements Serializable {
     }
 
     /**
-     * Création du contact
+     * Crée un contact.
      *
-     * @param id numéro d'identification
-     * @param firstName prénom
-     * @param lastName nom de famille
-     * @param phone numéro de téléphone
-     * @param email adresse email
-     * @param isFavorite true s'il est un favori, false sinon
+     * @param id         numéro d'identification
+     * @param firstName  prénom
+     * @param lastName   nom de famille
+     * @param phone      numéro de téléphone
+     * @param email      courriel
+     * @param isFavorite statut de favori
      */
     Contact(int id, String firstName, String lastName,
             String phone, String email, int isFavorite) {
@@ -45,31 +40,10 @@ public class Contact extends BaseObservable implements Serializable {
     }
 
     /**
-     * Méthode qui lit les informations d'un parcel et les associe au contact.
-     *
-     * @param in parcel qui contient les informations du contact
-     */
-    private Contact(Parcel in) {
-        id = in.readInt();
-        firstName = in.readString();
-        lastName = in.readString();
-        phone = in.readString();
-        email = in.readString();
-        isFavorite = in.readInt() == 1;
-    }
-
-    /**
      * @return numéro d'identification du contact
      */
-    public int getId() {
+    int getId() {
         return id;
-    }
-
-    /**
-     * @param id numéro d'identification du contact
-     */
-    public void setId(int id) {
-        this.id = id;
     }
 
     /**
@@ -86,7 +60,7 @@ public class Contact extends BaseObservable implements Serializable {
     public void setFirstName(String firstName) {
         if (this.firstName == null || !this.firstName.equals(firstName)) {
             this.firstName = firstName.trim();
-            notifyPropertyChanged(BR.contact);
+            notifyPropertyChanged(BR.firstName);
         }
     }
 
@@ -104,7 +78,7 @@ public class Contact extends BaseObservable implements Serializable {
     public void setLastName(String lastName) {
         if (this.lastName == null || !this.lastName.equals(lastName)) {
             this.lastName = lastName.trim();
-            notifyPropertyChanged(BR.contact);
+            notifyPropertyChanged(BR.lastName);
         }
     }
 
@@ -122,12 +96,12 @@ public class Contact extends BaseObservable implements Serializable {
     public void setPhone(String phone) {
         if (this.phone == null || !this.phone.equals(phone)) {
             this.phone = phone.trim();
-            notifyPropertyChanged(BR.contact);
+            notifyPropertyChanged(BR.phone);
         }
     }
 
     /**
-     * @return adresse email du contact
+     * @return courriel du contact
      */
     @Bindable
     public String getEmail() {
@@ -135,18 +109,17 @@ public class Contact extends BaseObservable implements Serializable {
     }
 
     /**
-     * @param email adresse email du contact
+     * @param email courriel du contact
      */
     public void setEmail(String email) {
         if (this.email == null || !this.email.equals(email)) {
             this.email = email.trim();
-            notifyPropertyChanged(BR.contact);
+            notifyPropertyChanged(BR.email);
         }
     }
 
     /**
-     * @return true si le contact est favori
-     *         false sinon
+     * @return statut de favori
      */
     @Bindable
     public boolean getIsFavorite() {
@@ -154,89 +127,67 @@ public class Contact extends BaseObservable implements Serializable {
     }
 
     /**
-     * @param isFavorite == true s'il est un contact favori
-     *                   == false sinon
+     * @param isFavorite statut de favori
      */
     public void setIsFavorite(boolean isFavorite) {
         if (this.isFavorite != isFavorite) {
             this.isFavorite = isFavorite;
-            notifyPropertyChanged(BR.contact);
+            notifyPropertyChanged(BR.isFavorite);
         }
     }
 
     /**
-     * @return les initiales du contact
+     * @return si le contact a un prénom
+     */
+    private boolean hasFirstName() {
+        return firstName != null && !firstName.isEmpty();
+    }
+
+    /**
+     * @return si le contact a un nom de famille
+     */
+    private boolean hasLastName() {
+        return lastName != null && !lastName.isEmpty();
+    }
+
+    /**
+     * @return si le contact a un nom
+     */
+    boolean hasName() {
+        return hasFirstName() || hasLastName();
+    }
+
+    /**
+     * @return initiales du contact
      */
     public String getInitials() {
-        String initials = "";
-        if (firstName != null && !firstName.isEmpty())
-            initials += firstName.charAt(0);
-        if (lastName != null && !lastName.isEmpty())
-            initials += lastName.charAt(0);
-        return initials;
+        StringBuilder initials = new StringBuilder();
+
+        if (hasFirstName())
+            initials.append(firstName.charAt(0));
+        if (hasLastName())
+            initials.append(lastName.charAt(0));
+
+        return initials.toString();
     }
 
     /**
-     * @return le nom complet du contact
+     * @return nom complet du contact
      */
     public String getFullName() {
-        String name = "";
-        if (firstName != null && !firstName.isEmpty())
-            name += firstName + " "; // XXX
-        if (lastName != null && !lastName.isEmpty())
-            name += lastName;
-        return name;
-    }
+        boolean hasFirst = hasFirstName(),
+                hasLast = hasLastName();
 
+        StringBuilder name = new StringBuilder();
 
-    public boolean isFirstNameNull(){
-        return  firstName == null || firstName.replaceAll(" ", "").isEmpty();
-    }
+        if (hasFirst) {
+            name.append(firstName);
+            if (hasLast)
+                name.append(' ');
+        }
+        if (hasLast)
+            name.append(lastName);
 
-    public boolean isLastNameNull(){
-        return lastName == null || lastName.replaceAll(" ", "").isEmpty();
-    }
-
-    /**
-     * Méthode qui vérifie si les champs de prénom et nom de famille sont vides.
-     *
-     * @return true s'ils sont vides
-     *         false sinon
-     */
-    public boolean isNameNull(){
-        return isFirstNameNull()  && isLastNameNull();
-    }
-
-    public boolean hasName() {
-        return (firstName != null && !firstName.trim().isEmpty()) ||
-               (lastName != null && !lastName.trim().isEmpty());
-    }
-}
-
-/**
- * La classe SortbyName contient une methode qui présente la comparaison
- * faite entre les contacts pour les classer en ordre alphabétque
- */
-class SortbyName implements Comparator<Contact> {
-    /**
-     * Méthode qui compare lexicographiquement deux contacts
-     *
-     * @param a premier contact
-     * @param b deuxième contact
-     * @return valeur de la comparaison
-     */
-    public int compare(Contact a, Contact b) {
-        if(!a.isFirstNameNull() && !b.isFirstNameNull()){
-            int compare = a.getFirstName().toLowerCase().compareTo(b.getFirstName().toLowerCase());
-            if(compare != 0)
-                return compare;
-        } else if (a.isFirstNameNull() ^ b.isFirstNameNull())
-            return a.isFirstNameNull() ? 1 : -1;
-        if(!a.isLastNameNull() && !b.isLastNameNull()){
-            return a.getLastName().toLowerCase().compareTo(b.getLastName().toLowerCase());
-        } else if (a.isLastNameNull() ^ b.isLastNameNull())
-            return  a.getLastName() == null ? 1 : -1;
-
-        return 0;
+        return name.toString();
     }
 }
