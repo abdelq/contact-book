@@ -53,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
                 /* Démarre l'activité d'édition de contact lors d'un long clic sur un contact */
                 Intent intent = new Intent(MainActivity.this, EditContactActivity.class);
                 Bundle extras = new Bundle();
-                extras.putParcelable("contact", contacts.get(position));
+                extras.putSerializable("contact", contacts.get(position));
+                //extras.putParcelable("contact", contacts.get(position));
                 extras.putString("title", "Edit contact");
                 intent.putExtras(extras);
                 startActivity(intent);
@@ -158,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
         if (item.getItemId() == R.id.new_contact) {
             Intent intent =new Intent(this, EditContactActivity.class);
             Bundle extras = new Bundle();
-            extras.putParcelable("contact", new Contact());
+            extras.putSerializable("contact", new Contact());
             extras.putString("title", "New contact");
             intent.putExtras(extras);
             startActivity(intent);

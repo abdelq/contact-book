@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -14,23 +15,11 @@ import java.util.Comparator;
  * un contact dans la liste de contact du carnet d'adresse en stockant
  * ses informations.
  */
-public class Contact extends BaseObservable implements Parcelable {
+public class Contact extends BaseObservable implements Serializable {
     private int id;
     private String firstName, lastName;
     private String phone, email;
     private boolean isFavorite;
-
-    public static final Creator<Contact> CREATOR = new Creator<Contact>() {
-        @Override
-        public Contact createFromParcel(Parcel in) {
-            return new Contact(in);
-        }
-
-        @Override
-        public Contact[] newArray(int size) {
-            return new Contact[size];
-        }
-    };
 
     Contact() {
     }
@@ -96,7 +85,7 @@ public class Contact extends BaseObservable implements Parcelable {
      */
     public void setFirstName(String firstName) {
         if (this.firstName == null || !this.firstName.equals(firstName)) {
-            this.firstName = firstName;
+            this.firstName = firstName.trim();
             notifyPropertyChanged(BR.contact);
         }
     }
@@ -114,7 +103,7 @@ public class Contact extends BaseObservable implements Parcelable {
      */
     public void setLastName(String lastName) {
         if (this.lastName == null || !this.lastName.equals(lastName)) {
-            this.lastName = lastName;
+            this.lastName = lastName.trim();
             notifyPropertyChanged(BR.contact);
         }
     }
@@ -132,7 +121,7 @@ public class Contact extends BaseObservable implements Parcelable {
      */
     public void setPhone(String phone) {
         if (this.phone == null || !this.phone.equals(phone)) {
-            this.phone = phone;
+            this.phone = phone.trim();
             notifyPropertyChanged(BR.contact);
         }
     }
@@ -150,7 +139,7 @@ public class Contact extends BaseObservable implements Parcelable {
      */
     public void setEmail(String email) {
         if (this.email == null || !this.email.equals(email)) {
-            this.email = email;
+            this.email = email.trim();
             notifyPropertyChanged(BR.contact);
         }
     }
@@ -180,9 +169,9 @@ public class Contact extends BaseObservable implements Parcelable {
      */
     public String getInitials() {
         String initials = "";
-        if (firstName != null)
+        if (firstName != null && !firstName.isEmpty())
             initials += firstName.charAt(0);
-        if (lastName != null)
+        if (lastName != null && !lastName.isEmpty())
             initials += lastName.charAt(0);
         return initials;
     }
@@ -192,33 +181,13 @@ public class Contact extends BaseObservable implements Parcelable {
      */
     public String getFullName() {
         String name = "";
-        if (firstName != null)
+        if (firstName != null && !firstName.isEmpty())
             name += firstName + " "; // XXX
-        if (lastName != null)
+        if (lastName != null && !lastName.isEmpty())
             name += lastName;
         return name;
     }
 
-    @Override
-    public int describeContents() {
-        return 0; // XXX
-    }
-
-    /**
-     * Méthode qui place les informations du contact dans un parcel
-     *
-     * @param dest parcel dans lequel les informations sont stoquées
-     * @param flags
-     */
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(firstName);
-        dest.writeString(lastName);
-        dest.writeString(phone);
-        dest.writeString(email);
-        dest.writeInt(isFavorite ? 1 : 0);
-    }
 
     public boolean isFirstNameNull(){
         return  firstName == null || firstName.replaceAll(" ", "").isEmpty();
@@ -236,6 +205,11 @@ public class Contact extends BaseObservable implements Parcelable {
      */
     public boolean isNameNull(){
         return isFirstNameNull()  && isLastNameNull();
+    }
+
+    public boolean hasName() {
+        return (firstName != null && !firstName.trim().isEmpty()) ||
+               (lastName != null && !lastName.trim().isEmpty());
     }
 }
 

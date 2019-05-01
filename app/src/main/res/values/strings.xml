@@ -10,4 +10,6 @@
     <string name="new_contact">New contact</string>
     <string name="save">Save</string>
     <string name="filter">Filter</string>
+    <string name="edit_contact">Edit contact</string>
+    <string name="name_error">Contact must have a valid name</string>
 </resources>
