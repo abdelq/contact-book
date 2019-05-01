@@ -9,4 +9,5 @@
     <string name="favorite">Favorite</string>
     <string name="new_contact">New contact</string>
     <string name="save">Save</string>
+    <string name="filter">Filter</string>
 </resources>

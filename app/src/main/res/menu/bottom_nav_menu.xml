@@ -5,7 +5,7 @@
         android:id="@+id/navigation_fav"
         android:checkable="false"
         android:checked="false"
-        android:icon="@drawable/ic_favorite_primary_24dp"
+        android:icon="@drawable/ic_favorite_accent_24dp"
         android:title="@string/favorites" />
 
     <item

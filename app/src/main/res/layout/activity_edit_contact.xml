@@ -73,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:contentDescription="@string/phone"
-                    app:srcCompat="@drawable/ic_call_accent_24dp" />
+                    app:srcCompat="@drawable/ic_call_primary_24dp" />
 
                 <EditText
                     android:id="@+id/phone"
@@ -121,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:contentDescription="@string/favorite"
-                    app:srcCompat="@drawable/ic_favorite_primary_24dp" />
+                    app:srcCompat="@drawable/ic_favorite_accent_24dp" />
 
                 <Switch
                     android:id="@+id/favorite"
