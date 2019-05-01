@@ -11,15 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static ca.umontreal.iro.dift2905.contacts.DBHelper.ContactColumns.*;
-
+import static java.lang.String.format;
+import static java.lang.String.valueOf;
 
 /**
- * La classe DBHelper s'occupe des opérations qui gèrent la base
- * de données contenant les informations sur les contacts.
+ * DBHelper est un utilitaire pour effectuer des opérations sur la base de
+ * données SQLite locale contenant les informations des contacts.
  */
 public class DBHelper extends SQLiteOpenHelper {
-    private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "Contacts.db";
+    private static String DATABASE_NAME = "Contacts.db";
+    private static int DATABASE_VERSION = 1;
 
     private static SQLiteDatabase db;
 
@@ -29,74 +30,81 @@ public class DBHelper extends SQLiteOpenHelper {
             db = getWritableDatabase();
     }
 
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(format(
+                "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER)",
+                ContactColumns.TABLE_NAME, _ID, COLUMN_NAME_FIRSTNAME, COLUMN_NAME_LASTNAME,
+                COLUMN_NAME_PHONE, COLUMN_NAME_EMAIL, COLUMN_NAME_FAVORITE));
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(format("DROP TABLE IF EXISTS %s", ContactColumns.TABLE_NAME));
+        onCreate(db);
+    }
+
     /**
-     * @return une liste contenant l'ensemble des contacts.
+     * Génère une liste de l'ensemble les contacts.
+     *
+     * @return liste de contacts
      */
     List<Contact> getContacts() {
         Cursor cur = db.query(ContactColumns.TABLE_NAME, null,
                 null, null, null, null,
-                COLUMN_NAME_FIRSTNAME + ", " + COLUMN_NAME_LASTNAME
-        );
+                format("%s, %s", COLUMN_NAME_FIRSTNAME, COLUMN_NAME_LASTNAME));
 
         List<Contact> contacts = new ArrayList<>();
         for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext())
-            contacts.add(new Contact(
-                    cur.getInt(cur.getColumnIndex(_ID)),
+            contacts.add(new Contact(cur.getInt(cur.getColumnIndex(_ID)),
                     cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME)),
                     cur.getString(cur.getColumnIndex(COLUMN_NAME_LASTNAME)),
                     cur.getString(cur.getColumnIndex(COLUMN_NAME_PHONE)),
                     cur.getString(cur.getColumnIndex(COLUMN_NAME_EMAIL)),
-                    cur.getInt(cur.getColumnIndex(COLUMN_NAME_FAVORITE))
-            ));
-        cur.close();
+                    cur.getInt(cur.getColumnIndex(COLUMN_NAME_FAVORITE))));
 
+        cur.close();
         return contacts;
     }
 
 
     /**
-     * @param favorite
-     * @param filter
-     * @return une liste de contacts filtrée.
+     * Génère une liste de contacts selon le statut de favori et un filtre.
+     *
+     * @param favorite statut de favori
+     * @param filter   filtre de nom
+     * @return liste de contacts filtrée
      */
-    List<Contact> getContactsFiltered(boolean favorite, String filter) {
-        String selection = COLUMN_NAME_FAVORITE + " = ?";
+    List<Contact> getContacts(boolean favorite, String filter) {
+        String selection = format("%s = ?", COLUMN_NAME_FAVORITE);
         String[] selectionArgs = new String[]{favorite ? "1" : "0"};
-        Cursor cur;
+        String orderBy = format("%s, %s", COLUMN_NAME_FIRSTNAME, COLUMN_NAME_LASTNAME);
 
-        if (favorite)
-            cur = db.query(ContactColumns.TABLE_NAME, null,
-                    selection, selectionArgs,
-                    null, null, COLUMN_NAME_FIRSTNAME + ", " + COLUMN_NAME_LASTNAME
-            );
-        else
-            cur = db.query(ContactColumns.TABLE_NAME, null,
-                    null, null,
-                    null, null, COLUMN_NAME_FIRSTNAME + ", " + COLUMN_NAME_LASTNAME
-            );
+        Cursor cur = db.query(ContactColumns.TABLE_NAME, null,
+                favorite ? selection : null, favorite ? selectionArgs : null,
+                null, null, orderBy);
+
         List<Contact> contacts = new ArrayList<>();
         for (cur.moveToFirst(); !cur.isAfterLast(); cur.moveToNext()) {
-            String firstN = cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME));
-            String lastN = cur.getString(cur.getColumnIndex(COLUMN_NAME_LASTNAME));
+            String firstName = cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME));
+            String lastName = cur.getString(cur.getColumnIndex(COLUMN_NAME_LASTNAME));
 
-            if ((firstN != null && firstN.toLowerCase().startsWith(filter.toLowerCase())) ||
-                    (lastN != null && lastN.toLowerCase().startsWith(filter.toLowerCase())))
-                contacts.add(new Contact(
-                        cur.getInt(cur.getColumnIndex(_ID)),
+            if ((firstName != null && firstName.toLowerCase().startsWith(filter.toLowerCase())) ||
+                    (lastName != null && lastName.toLowerCase().startsWith(filter.toLowerCase()))) // XXX
+                contacts.add(new Contact(cur.getInt(cur.getColumnIndex(_ID)),
                         cur.getString(cur.getColumnIndex(COLUMN_NAME_FIRSTNAME)),
                         cur.getString(cur.getColumnIndex(COLUMN_NAME_LASTNAME)),
                         cur.getString(cur.getColumnIndex(COLUMN_NAME_PHONE)),
                         cur.getString(cur.getColumnIndex(COLUMN_NAME_EMAIL)),
-                        cur.getInt(cur.getColumnIndex(COLUMN_NAME_FAVORITE))
-                ));
+                        cur.getInt(cur.getColumnIndex(COLUMN_NAME_FAVORITE))));
         }
-        cur.close();
 
+        cur.close();
         return contacts;
     }
 
     /**
-     * Méthode qui ajoute un contact à la base de données
+     * Ajoute un contact à la base de données.
      *
      * @param contact contact à ajouter
      */
@@ -112,7 +120,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Méthode qui met à jour un contact de la base de données
+     * Met à jour un contact de la base de données.
      *
      * @param contact contact à modifier
      */
@@ -124,42 +132,18 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put(COLUMN_NAME_EMAIL, contact.getEmail());
         values.put(COLUMN_NAME_FAVORITE, contact.getIsFavorite());
 
-        String selection = _ID + " = ?";
-        String[] selectionArgs = new String[]{String.valueOf(contact.getId())};
-
-        db.update(ContactColumns.TABLE_NAME, values, selection, selectionArgs);
+        db.update(ContactColumns.TABLE_NAME, values,
+                String.format("%s = ?", _ID), new String[]{valueOf(contact.getId())});
     }
 
     /**
-     * Méthode qui supprime un contact de la base de donnée
+     * Supprime un contact de la base de données.
      *
-     * @param contact contact que l'on veut supprimer
+     * @param contact contact à supprimer
      */
     public void deleteContact(Contact contact) {
-        String selection = _ID + " = ?";
-        String[] selectionArgs = new String[]{String.valueOf(contact.getId())};
-
-        db.delete(ContactColumns.TABLE_NAME, selection, selectionArgs);
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-        db.execSQL(String.format(
-                "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT, %s TEXT, %s TEXT, %s TEXT, %s INTEGER)",
-                ContactColumns.TABLE_NAME, _ID, COLUMN_NAME_FIRSTNAME, COLUMN_NAME_LASTNAME,
-                COLUMN_NAME_PHONE, COLUMN_NAME_EMAIL, COLUMN_NAME_FAVORITE
-        ));
-    }
-
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(String.format("DROP TABLE IF EXISTS %s", ContactColumns.TABLE_NAME));
-        onCreate(db);
-    }
-
-    @Override
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
+        db.delete(ContactColumns.TABLE_NAME,
+                format("%s = ?", _ID), new String[]{valueOf(contact.getId())});
     }
 
     static class ContactColumns implements BaseColumns {

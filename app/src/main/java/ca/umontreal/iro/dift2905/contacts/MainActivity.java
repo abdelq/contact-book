@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
                 filter = newText;
                 contacts.clear();
                 System.out.println(favorites);
-                contacts.addAll(new DBHelper(getBaseContext()).getContactsFiltered(favorites, filter));
+                contacts.addAll(new DBHelper(getBaseContext()).getContacts(favorites, filter));
                 adapter.setFilter(filter);
                 adapter.notifyDataSetChanged();
                 return false;
@@ -179,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         else
             this.setTitle(getResources().getString(R.string.all));
         contacts.clear();
-        contacts.addAll(new DBHelper(getBaseContext()).getContactsFiltered(favorites, filter));
+        contacts.addAll(new DBHelper(getBaseContext()).getContacts(favorites, filter));
         adapter.notifyDataSetChanged(); // XXX
     }
 }
